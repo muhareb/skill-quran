@@ -40,7 +40,7 @@ class QuranSkill(MycroftSkill):
         }
 
     def initialize(self):
-        self.audioservice = AudioService(self.emitter)
+        self.audioservice = AudioService(self.bus)
         self.add_event("mycroft.quran", self.quran, False)
 
     def quran(self, message):
