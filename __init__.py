@@ -24,6 +24,8 @@ from mycroft import MycroftSkill, intent_handler
 from mycroft.skills.audioservice import AudioService
 from mycroft.audio import wait_while_speaking
 
+from . import utils
+
 class QuranSkill(MycroftSkill):
     def __init__(self):
         super(QuranSkill, self).__init__(name="QuranSkill")
@@ -51,28 +53,15 @@ class QuranSkill(MycroftSkill):
     def handle_quran(self, message):
         article = message.data.get('ArticleTitle2')
         #print(article)
-        if article == 'النصر':
-            path = join(dirname(__file__), "النصر.mp3")
-        elif article == 'الناس':
-            path = join(dirname(__file__), "الناس.mp3")
-        elif article == 'المسد':
-            path = join(dirname(__file__), "المسد.mp3")
-        elif article == 'الماعون':
-            path = join(dirname(__file__), "الماعون.mp3")
-        elif article == 'الكوثر':
-            path = join(dirname(__file__), "الكوثر.mp3")
-        elif article == 'الكافرون':
-            path = join(dirname(__file__), "الكافرون.mp3")
-        elif article == 'الفلق':
-            path = join(dirname(__file__), "الفلق.mp3")
-        elif article == 'الاخلاص':
-            path = join(dirname(__file__), "الاخلاص.mp3")
-        else:
-            path = random.choice(self.play_list)
+        reader=random.choice(utils.readers)
+        surah=str(utils.surahs.index(article)+1)
+        url="http://api.alquran.cloud/v1/surah/"+surah+"/"+reader
+        json = utils.json_from_url(url)
+        path = utils.parse_surah(json)
 
         try:
-            self.speak_dialog('quran')
-            wait_while_speaking()
+            #self.speak_dialog('quran')
+            #wait_while_speaking()
             self.audioservice.play(path)
         except Exception as e:
             self.log.error("Error: {0}".format(e))
