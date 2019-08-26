@@ -20,59 +20,56 @@ import random
 from os.path import dirname, join
 
 from adapt.intent import IntentBuilder
-from mycroft import MycroftSkill, intent_handler
+from mycroft import MycroftSkill, intent_file_handler
 from mycroft.skills.audioservice import AudioService
 from mycroft.audio import wait_while_speaking
+
+from . import utils
 
 class QuranSkill(MycroftSkill):
     def __init__(self):
         super(QuranSkill, self).__init__(name="QuranSkill")
         self.process = None
-        self.play_list = {
-            0: join(dirname(__file__), "النصر.mp3"),
-            1: join(dirname(__file__), "الناس.mp3"),
-            2: join(dirname(__file__), "المسد.mp3"),
-            3: join(dirname(__file__), "الماعون.mp3"),
-            4: join(dirname(__file__), "الكوثر.mp3"),
-            5: join(dirname(__file__), "الكافرون.mp3"),
-            6: join(dirname(__file__), "الفلق.mp3"),
-            7: join(dirname(__file__), "الاخلاص.mp3")
-        }
 
     def initialize(self):
         self.audioservice = AudioService(self.bus)
-        self.add_event("mycroft.quran", self.quran, False)
 
-    def quran(self, message):
-        self.process = play_mp3(self.play_list[3])
+    @intent_file_handler('surah.intent')
+    def handle_surah_intent(self, message):
+        article = message.data.get('surah')
+        readerName  = message.data.get('reader')
 
-    @intent_handler(IntentBuilder('').require('Quran').
-                    optionally('ArticleTitle2'))
-    def handle_quran(self, message):
-        article = message.data.get('ArticleTitle2')
-        #print(article)
-        if article == 'النصر':
-            path = join(dirname(__file__), "النصر.mp3")
-        elif article == 'الناس':
-            path = join(dirname(__file__), "الناس.mp3")
-        elif article == 'المسد':
-            path = join(dirname(__file__), "المسد.mp3")
-        elif article == 'الماعون':
-            path = join(dirname(__file__), "الماعون.mp3")
-        elif article == 'الكوثر':
-            path = join(dirname(__file__), "الكوثر.mp3")
-        elif article == 'الكافرون':
-            path = join(dirname(__file__), "الكافرون.mp3")
-        elif article == 'الفلق':
-            path = join(dirname(__file__), "الفلق.mp3")
-        elif article == 'الاخلاص':
-            path = join(dirname(__file__), "الاخلاص.mp3")
+        if readerName is None:
+            reader=random.choice(utils.readers)
         else:
-            path = random.choice(self.play_list)
+            try:
+                reader_i=utils.readers_ar.index(readerName)
+                reader  =utils.readers[reader_i]
+            except ValueError:
+                reader=random.choice(utils.readers)
+                #print("reader ValueError")
+ 
+        if article is None:
+            surah=str(random.choice(range(1, 114)))
+        else:
+            try:
+               surah=str(utils.surahs.index(article)+1)
+            except ValueError:
+               surah=str(random.choice(range(1, 114)))
+               #print("surah ValueError")
+
+        #print(article)
+        #print(readerName)
+        #print(surah)
+        #print(reader)
+
+        url="http://api.alquran.cloud/v1/surah/"+surah+"/"+reader
+        json = utils.json_from_url(url)
+        path = utils.parse_surah(json)
 
         try:
-            self.speak_dialog('quran')
-            wait_while_speaking()
+            #self.speak_dialog('quran')
+            #wait_while_speaking()
             self.audioservice.play(path)
         except Exception as e:
             self.log.error("Error: {0}".format(e))
