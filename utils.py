@@ -16,7 +16,8 @@ def parse_surah(data):
     ayah=data["ayahs"]
     audio=[]
     for x in ayah:
-        audio.append(x["audio"]) 
+        #audio.append(x["audio"])
+        audio.append(x["audioSecondary"][0])
     return audio
 
 def clean_txt(txt):
