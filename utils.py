@@ -20,6 +20,15 @@ def parse_surah(data):
         audio.append(x["audioSecondary"][0])
     return audio
 
+def parse_tafseer(data):
+
+    data=data["data"][0]
+    ayah=data["ayahs"]
+    tafseer=[]
+    for x in ayah:
+        tafseer.append(x["text"])
+    return tafseer
+
 def clean_txt(txt):
 
     # Remove non-breaking spaces

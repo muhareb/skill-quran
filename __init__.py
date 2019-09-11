@@ -34,6 +34,7 @@ class QuranSkill(MycroftSkill):
     def initialize(self):
         self.audioservice = AudioService(self.bus)
 
+###################################################################
     @intent_file_handler('surah.intent')
     def handle_surah_intent(self, message):
         article = message.data.get('surah')
@@ -63,9 +64,20 @@ class QuranSkill(MycroftSkill):
         #print(surah)
         #print(reader)
 
-        url="http://api.alquran.cloud/v1/surah/"+surah+"/"+reader
-        json = utils.json_from_url(url)
-        path = utils.parse_surah(json)
+        if readerName!="متنوع":
+            url="http://api.alquran.cloud/v1/surah/"+surah+"/"+reader
+            json = utils.json_from_url(url)
+            path = utils.parse_surah(json)
+        else:
+            paths = []
+            path  = []
+            for reader in utils.readers:
+                url ="http://api.alquran.cloud/v1/surah/"+surah+"/"+reader
+                json= utils.json_from_url(url)
+                paths.append(utils.parse_surah(json))
+            for ii in range(len(paths[0])):                             
+                path.append(paths[random.choice(range(0, 9))][ii])
+                #print(path[ii])
 
         try:
             #self.speak_dialog('quran')
@@ -73,7 +85,41 @@ class QuranSkill(MycroftSkill):
             self.audioservice.play(path)
         except Exception as e:
             self.log.error("Error: {0}".format(e))
+#################################################################################
+    @intent_file_handler('tafseer.intent')
+    def handle_tafseer_intent(self, message):
+        article = message.data.get('surah')
 
+        if article is None:
+            surah=str(random.choice(range(1, 114)))
+        else:
+            try:
+               surah=str(utils.surahs.index(article)+1)
+            except ValueError:
+               surah=str(random.choice(range(1, 114)))
+
+        #Audio
+        url="http://api.alquran.cloud/v1/surah/"+surah+"/ar.alafasy"
+        json = utils.json_from_url(url)
+        path_surah = utils.parse_surah(json)
+
+        #Tafseer
+        #url="http://api.alquran.cloud/v1/surah/"+surah+"/editions/ar.muyassar"
+        url="http://api.alquran.cloud/v1/surah/"+surah+"/editions/ar.jalalayn"
+
+        json = utils.json_from_url(url)
+        path_tafseer = utils.parse_tafseer(json)
+
+        try:
+            for ayah in range(len(path_tafseer)):
+                self.audioservice.play(path_surah[ayah])
+                wait_while_speaking()
+                self.speak(path_tafseer[ayah])
+                wait_while_speaking()
+        except Exception as e:
+            self.log.error("Error: {0}".format(e))
+
+#################################################################################
     def stop(self):
         if self.process and self.process.poll() is None:
             self.speak_dialog('quran.stop')
