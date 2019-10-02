@@ -112,8 +112,8 @@ class QuranSkill(MycroftSkill):
 
         try:
             for ayah in range(len(path_tafseer)):
-                self.audioservice.play(path_surah[ayah])
-                wait_while_speaking()
+                #self.audioservice.play(path_surah[ayah])
+                #wait_while_speaking()
                 self.speak(path_tafseer[ayah])
                 wait_while_speaking()
         except Exception as e:
