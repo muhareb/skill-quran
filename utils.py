@@ -6,7 +6,10 @@ import json
 import random
 
 def json_from_url(url):
-    res = urllib.request.urlopen(url)
+    #res = urllib.request.urlopen(url)
+    req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'}) 
+    res = urllib.request.urlopen(req)
+    
     body = res.read().decode('utf-8')
     return json.loads(body)
 
