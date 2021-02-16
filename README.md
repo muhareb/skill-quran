@@ -1,22 +1,5 @@
-# <img src='https://raw.githack.com/FortAwesome/Font-Awesome/master/svgs/solid/laugh-beam.svg' card_color='#22a7f0' width='50' height='50' style='vertical-align:bottom'/> Singing
-Mycroft sings lyrics to some popular songs
-
-## About 
-Mycroft will speak the lyrics to a random pop music song using text to speech. 
+# <img src='https://raw.githack.com/FortAwesome/Font-Awesome/master/svgs/solid/laugh-beam.svg' card_color='#22a7f0' width='50' height='50' style='vertical-align:bottom'/> Skill-quran
+Recite Quran chapters. 
 
 ## Examples 
-* "Sing"
-
-## Credits 
-Mycroft AI (@MycroftAI)
-
-## Category
-**Entertainment**
-
-## Tags
-#sing
-#singing
-#lyrics
-#song
-#music
-#texttospeech
+* "اقرا سورة النصر بصوت السديس"
