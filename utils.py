@@ -19,8 +19,14 @@ def parse_surah(data):
     ayah=data["ayahs"]
     audio=[]
     for x in ayah:
-        #audio.append(x["audio"])
-        audio.append(x["audioSecondary"][0])
+        if (x["audio"] is not None):
+            audio.append(x["audio"])
+        elif (len(x["audioSecondary"]) > 0):
+            audio.append(x["audioSecondary"][0])
+        else:
+            print("xxxxxxxxxxxx")
+            print(x["audioSecondary"])
+
     return audio
 
 def parse_tafseer(data):

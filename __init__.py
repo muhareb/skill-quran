@@ -65,20 +65,21 @@ class QuranSkill(MycroftSkill):
         #print(reader)
 
         if readerName!="متنوع":
-            url="http://api.alquran.cloud/v1/surah/"+surah+"/"+reader
+            url="https://api.alquran.cloud/v1/surah/"+surah+"/"+reader
             json = utils.json_from_url(url)
             path = utils.parse_surah(json)
         else:
             paths = []
             path  = []
             for reader in utils.readers:
-                url ="http://api.alquran.cloud/v1/surah/"+surah+"/"+reader
+                url ="https://api.alquran.cloud/v1/surah/"+surah+"/"+reader
                 json= utils.json_from_url(url)
                 paths.append(utils.parse_surah(json))
             for ii in range(len(paths[0])):                             
                 path.append(paths[random.choice(range(0, 9))][ii])
                 #print(path[ii])
 
+        #print(url)
         try:
             #self.speak_dialog('quran')
             #wait_while_speaking()
@@ -99,13 +100,13 @@ class QuranSkill(MycroftSkill):
                surah=str(random.choice(range(1, 114)))
 
         #Audio
-        url="http://api.alquran.cloud/v1/surah/"+surah+"/ar.alafasy"
+        url="https://api.alquran.cloud/v1/surah/"+surah+"/ar.alafasy"
         json = utils.json_from_url(url)
         path_surah = utils.parse_surah(json)
 
         #Tafseer
-        #url="http://api.alquran.cloud/v1/surah/"+surah+"/editions/ar.muyassar"
-        url="http://api.alquran.cloud/v1/surah/"+surah+"/editions/ar.jalalayn"
+        #url="https://api.alquran.cloud/v1/surah/"+surah+"/editions/ar.muyassar"
+        url="https://api.alquran.cloud/v1/surah/"+surah+"/editions/ar.jalalayn"
 
         json = utils.json_from_url(url)
         path_tafseer = utils.parse_tafseer(json)
