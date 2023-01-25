@@ -67,14 +67,15 @@ class QuranSkill(MycroftSkill):
         if readerName!="متنوع":
             url="https://api.alquran.cloud/v1/surah/"+surah+"/"+reader
             json = utils.json_from_url(url)
-            path = utils.parse_surah(json)
+            path, pathText = utils.parse_surah(json)
         else:
             paths = []
             path  = []
             for reader in utils.readers:
                 url ="https://api.alquran.cloud/v1/surah/"+surah+"/"+reader
                 json= utils.json_from_url(url)
-                paths.append(utils.parse_surah(json))
+                path2, pathText = utils.parse_surah(json)
+                paths.append(path2)
             for ii in range(len(paths[0])):                             
                 path.append(paths[random.choice(range(0, 9))][ii])
                 #print(path[ii])
@@ -84,6 +85,13 @@ class QuranSkill(MycroftSkill):
             #self.speak_dialog('quran')
             #wait_while_speaking()
             self.audioservice.play(path)
+            t=""
+            i = len(path)
+            if i > 10:
+                i = 10
+            for x in range(i):
+                t = t + pathText[x] + "\n"
+            self.gui_show(t)
         except Exception as e:
             self.log.error("Error: {0}".format(e))
 #################################################################################
@@ -127,6 +135,9 @@ class QuranSkill(MycroftSkill):
             self.process.terminate()
             self.process.wait()
 
-
+    def gui_show(self, ayah):
+        self.gui['ayah'] = ayah
+        self.gui.show_page("ayahText.qml")
+        
 def create_skill():
     return QuranSkill()
